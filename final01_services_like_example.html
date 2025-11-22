@@ -1,0 +1,3356 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+<title>Poetry Pixel — Premium Creative Studio | Video Editing, Motion Graphics &amp; AI-Age Visuals</title>
+<meta content="Poetry Pixel: Premium creative studio specializing in video editing, motion graphics, branding, and AI-age visuals. Pixels that speak like poetry." name="description"/>
+<meta content="creative studio, video editing, motion graphics, branding, AI visuals, poetry pixel, digital content" name="keywords"/>
+<!-- TODO: set real canonical -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://i.ytimg.com" rel="preconnect"/>
+<link href="https://drive.google.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+<!-- CHANGELOG:
+  - เพิ่มระบบแก้ไขเนื้อหาแบบ UI ฟอร์มใช้งานง่าย
+  - ปุ่มลอย "แก้ไขเนื้อหา" มุมขวาล่าง + รหัสผ่าน admin
+  - Content Editor Panel แบบ drawer ด้านขวา
+  - ฟอร์มเพิ่ม/แก้ไขรายการ + ตรวจชนิดลิงก์อัตโนมัติ
+  - Inline edit บนการ์ดผลงาน + drag & drop จัดลำดับ
+  - Advanced JSON mode สำหรับผู้เชี่ยวชาญ
+  - Graphic Works ใช้ง่ายขึ้น + TikTok เสถียร
+  - ระบบบันทึกอัตโนมัติ + preview thumbnail สด
+-->
+
+<style>
+    :root {
+      --bg: #ffffff;
+      --surface: #fafafa;
+      --surface-light: #ffffff;
+      --text: #171717;
+      --text-muted: #666666;
+      --border: #eaeaea;
+      --glass: rgba(0, 0, 0, 0.02);
+      --accent: #2563EB;
+      --accent-600: #1D4ED8;
+      --accent-200: #93C5FD;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --accent-gradient: linear-gradient(135deg, var(--accent), var(--accent-200));
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --radius: 8px;
+      --transition: all 0.2s ease;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface-light: #1a1a1a;
+      --text: #f5f5f5;
+      --text-muted: #a0a0a0;
+      --border: #262626;
+      --glass: rgba(255, 255, 255, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font: 400 16px/1.6 'Inter', 'Noto Sans Thai', system-ui, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      transition: var(--transition);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    h1 { font-size: clamp(.5rem, 6vw, 4rem); }
+    h2 { font-size: clamp(2rem, 5vw, 3rem); }
+    h3 { font-size: clamp(1.5rem, 4vw, 2.25rem); }
+
+    p {
+      margin-bottom: 1.5rem;
+      color: var(--text-muted);
+    }
+
+    .text-gradient {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fadeIn { animation: fadeIn 0.6s ease-out forwards; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(1rem, 3vw, 2rem);
+    }
+
+    .section {
+      padding: clamp(3rem, 8vw, 5rem) 0;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: clamp(2rem, 5vw, 3.75rem);
+    }
+
+    .section-title {
+      margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 1.125rem;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--border);
+      transition: var(--transition);
+    }
+
+    html[data-theme="dark"] .nav {
+      background: rgba(10, 10, 10, 0.9);
+    }
+
+    .nav.scrolled {
+      box-shadow: var(--shadow);
+    }
+
+    .nav-grid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: clamp(1.5rem, 3vw, 2rem);
+      align-items: center;
+    }
+
+    .nav-link {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      font-size: 0.95rem;
+    }
+
+    .nav-link:hover {
+      color: var(--accent);
+    }
+
+    .nav-cta {
+      background: var(--accent-gradient);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      transition: var(--transition);
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .mobile-nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    #mobileNavOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    #mobileNavOverlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 300px;
+      height: 100%;
+      background: var(--surface-light);
+      z-index: 1000;
+      transition: var(--transition);
+      padding: 5rem 1.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav-link {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      transition: var(--transition);
+    }
+
+    .mobile-nav-link:hover {
+      background: var(--glass);
+    }
+
+    .mobile-nav-cta {
+      background: var(--accent-gradient);
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+      background: var(--surface);
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .hero-tagline {
+      font-size: 1rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .hero-description {
+      font-size: 1.125rem;
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--surface-light);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--glass);
+      transform: translateY(-2px);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+      height: 100%;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--glass);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Portfolio */
+    .portfolio-section {
+      background: var(--surface);
+    }
+
+    .portfolio-category {
+      margin-bottom: 4rem;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .category-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--glass);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .category-title {
+      font-size: 1.75rem;
+      margin: 0;
+    }
+
+    .portfolio-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .grid-featured {
+      grid-template-columns: 1fr;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .portfolio-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius);
+    }
+
+    .portfolio-card.featured {
+      aspect-ratio: 21/9;
+    }
+
+    .portfolio-card.regular {
+      aspect-ratio: 16/9;
+    }
+
+    .portfolio-card a {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .portfolio-thumbnail {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+      background: var(--glass);
+    }
+
+    .portfolio-card:hover .portfolio-thumbnail {
+      transform: scale(1.05);
+    }
+
+    .portfolio-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+      padding: 1.5rem;
+      color: white;
+      transform: translateY(10px);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .portfolio-card:hover .portfolio-overlay {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Graphic Works */
+    .graphic-works {
+      background: var(--surface-light);
+    }
+
+    .graphic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Pricing */
+    .pricing-section {
+      background: var(--surface);
+    }
+
+    .pricing-tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .pricing-tab {
+      padding: 0.75rem 1.5rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .pricing-tab[aria-selected="true"] {
+      color: var(--accent);
+    }
+
+    .pricing-tab[aria-selected="true"]::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent-gradient);
+    }
+
+    .pricing-tab-content {
+      display: none;
+    }
+
+    .pricing-tab-content.active {
+      display: block;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .pricing-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .halloween-badge {
+      position: absolute;
+      top: 1rem;
+      right: -30px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      padding: 0.25rem 1.875rem;
+      transform: rotate(45deg);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .pricing-header {
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .pricing-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .pricing-description {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .pricing-price {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .price-now {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .price-old {
+      font-size: 1rem;
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .price-unit {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+
+    .pricing-feature {
+      padding: 0.375rem 0;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .pricing-feature::before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .pricing-cta {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .pricing-note {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 3.75rem 0 1.875rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .footer-brand {
+      max-width: 300px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      margin-bottom: 1rem;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .footer-description {
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+      font-size: 0.95rem;
+    }
+
+    .footer-heading {
+      font-size: 1.1rem;
+      margin-bottom: 1.25rem;
+      color: var(--text);
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-link {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-link a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: var(--transition);
+      font-size: 0.95rem;
+    }
+
+    .footer-link a:hover {
+      color: var(--accent);
+    }
+
+    .social-links {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .social-link {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius);
+      background: var(--glass);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .social-link:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .footer-cta {
+      text-align: center;
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+      margin-bottom: 1.875rem;
+    }
+
+    .footer-bottom {
+      padding-top: 1.875rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Popup */
+    .promotion-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .promotion-popup.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .popup-content {
+      background: var(--surface-light);
+      border-radius: var(--radius);
+      overflow: hidden;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: var(--shadow);
+    }
+
+    .popup-header {
+      padding: 1.25rem;
+      background: var(--accent-gradient);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .popup-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .popup-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .popup-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .popup-body {
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .popup-image {
+      width: 100%;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+    }
+
+    .popup-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .popup-text {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .popup-expiry {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .popup-cta {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* Manager Panels */
+    .manager-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: var(--surface-light);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      z-index: 10000;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .manager-panel.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .panel-header {
+      padding: 1.25rem;
+      background: var(--accent-gradient);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .panel-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .panel-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .panel-body {
+      padding: 1.25rem;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .analytics-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .stat-card {
+      background: var(--glass);
+      padding: 1rem;
+      border-radius: var(--radius);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .analytics-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .analytics-item {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    .analytics-item:last-child {
+      border-bottom: none;
+    }
+
+    .analytics-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .action-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border);
+      background: var(--surface-light);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .action-btn.delete {
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .action-btn.delete:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    /* CMS Editor */
+    .cms-editor {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: var(--surface-light);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      z-index: 10000;
+      max-width: 800px;
+      width: 90%;
+      max-height: 80vh;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .cms-editor.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .cms-textarea {
+      width: 100%;
+      height: 300px;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      resize: vertical;
+    }
+
+    .cms-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* Content Editor Panel */
+    .content-editor {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100%;
+      background: var(--surface-light);
+      z-index: 10000;
+      transition: var(--transition);
+      box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-editor.active {
+      right: 0;
+    }
+
+    .editor-header {
+      padding: 1.25rem;
+      background: var(--accent-gradient);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .editor-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .editor-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .editor-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .editor-body {
+      padding: 1.25rem;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .editor-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .editor-tab {
+      padding: 0.5rem 1rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      font-size: 0.9rem;
+    }
+
+    .editor-tab.active {
+      color: var(--accent);
+    }
+
+    .editor-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent-gradient);
+    }
+
+    .editor-section {
+      display: none;
+    }
+
+    .editor-section.active {
+      display: block;
+    }
+
+    .item-list {
+      margin-bottom: 1.5rem;
+    }
+
+    .item-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      transition: var(--transition);
+    }
+
+    .item-card:hover {
+      background: var(--surface);
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+
+    .item-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      flex: 1;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .item-action {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 4px;
+      transition: var(--transition);
+    }
+
+    .item-action:hover {
+      background: var(--glass);
+      color: var(--text);
+    }
+
+    .item-url {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      word-break: break-all;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-200);
+    }
+
+    .form-textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .thumbnail-preview {
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .thumbnail-preview img {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Edit Mode Styles */
+    body.edit-mode .portfolio-card {
+      position: relative;
+    }
+
+    .edit-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: var(--transition);
+      z-index: 10;
+    }
+
+    body.edit-mode .portfolio-card:hover .edit-overlay {
+      opacity: 1;
+    }
+
+    .edit-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    /* Floating Edit Button */
+    .edit-button {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      z-index: 1000;
+      background: var(--accent-gradient);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      transition: var(--transition);
+      font-size: 1.25rem;
+    }
+
+    .edit-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+    }
+
+    /* Password Modal */
+    .password-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10001;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .password-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .password-content {
+      background: var(--surface-light);
+      border-radius: var(--radius);
+      overflow: hidden;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: var(--shadow);
+    }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Analytics Button */
+    #analyticsBtn {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      z-index: 1000;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-nav-toggle {
+        display: block;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-cta {
+        flex-direction: column;
+      }
+
+      .section {
+        padding: 3.75rem 0;
+      }
+
+      .grid-2, .grid-3, .graphic-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .portfolio-card.featured {
+        aspect-ratio: 16/9;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1.875rem;
+      }
+
+      .analytics-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .cms-actions {
+        flex-direction: column;
+      }
+
+      .content-editor {
+        width: 100%;
+        right: -100%;
+      }
+
+      .editor-tabs {
+        flex-direction: column;
+      }
+
+      .editor-actions {
+        flex-direction: column;
+      }
+    }
+
+    /* Accessibility */
+    .focus-visible:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+
+/* Compact Service Section */
+#services .grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+#services .card {
+  padding: 1.25rem;
+  border-radius: 12px;
+  background: var(--surface-light);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+#services .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--accent-gradient);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+#services .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border-color: var(--accent-200);
+}
+
+#services .card:hover::before {
+  transform: scaleX(1);
+}
+
+#services .card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-600));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+#services .card:hover .card-icon {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+#services .card-title {
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+#services .card-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #services .grid-3 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  #services .card {
+    padding: 1.125rem;
+  }
+  
+  #services .card-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  #services .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+
+
+/* === Ultra Compact Apple-like Service Section (v2) === */
+#services .grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+#services .card {
+  background: var(--surface-light);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.95rem 1.1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  transition: all 0.22s ease;
+}
+
+#services .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  border-color: var(--accent-200);
+}
+
+#services .card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 9px;
+  background: var(--glass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.65rem;
+  font-size: 1.2rem;
+}
+
+#services .card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  line-height: 1.3;
+}
+
+#services .card-text {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* tighter section header spacing for services only */
+#services .section-header {
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 992px) {
+  #services .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+@media (max-width: 640px) {
+  #services .grid-3 {
+    grid-template-columns: 1fr;
+  }
+  #services .card {
+    padding: 0.9rem 1rem;
+  }
+  #services .card-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+}
+
+
+
+/* === Responsive Fix for Services Layout === */
+@media (max-width: 1100px) {
+  #services .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  #services .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+/* === Force layout like example: 3 cols desktop, 2 cols tablet, 1 col mobile === */
+#services .grid-3 {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 1.25rem !important;
+}
+
+#services .card {
+  width: 100% !important;
+  padding: 1rem 1.25rem !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px !important;
+  background: var(--surface-light) !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03) !important;
+}
+
+#services .card-title {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.4rem !important;
+}
+
+#services .card-text {
+  font-size: 0.875rem !important;
+  color: var(--text-muted) !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 1100px) {
+  #services .grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 700px) {
+  #services .grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+}
+/* tighten header spacing to match example */
+#services .section-header {
+  margin-bottom: 2rem !important;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav" id="mainNav">
+  <div class="container">
+    <div class="nav-grid">
+      <a href="#" class="brand">POETRY PIXEL</a>
+
+      <div class="nav-links">
+        <a href="#portfolio" class="nav-link">ผลงาน</a>
+        <a href="#graphic-works" class="nav-link">งานกราฟิก</a>
+        <a href="#services" class="nav-link">บริการ</a>
+        <a href="#pricing" class="nav-link">ราคา</a>
+        <a href="#contact" class="nav-link">ติดต่อ</a>
+        <a href="#contact" class="nav-cta">เริ่มโปรเจกต์</a>
+        <a href="#" id="adminLogin" style="display:none;">Admin</a>
+      </div>
+
+      <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle mobile menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Nav Overlay -->
+<div id="mobileNavOverlay"></div>
+<div class="mobile-nav" id="mobileNav">
+  <a href="#portfolio" class="mobile-nav-link">ผลงาน</a>
+  <a href="#graphic-works" class="mobile-nav-link">งานกราฟิก</a>
+  <a href="#services" class="mobile-nav-link">บริการ</a>
+  <a href="#pricing" class="mobile-nav-link">ราคา</a>
+  <a href="#contact" class="mobile-nav-link">ติดต่อ</a>
+  <a href="#contact" class="mobile-nav-cta">เริ่มโปรเจกต์</a>
+</div>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content animate-fadeIn">
+      <div class="hero-tagline">ทีมเล็ก ๆ ที่เชื่อในพลังของภาพและเรื่องราว</div>
+      <h1>POETRY <span class="text-gradient">PIXEL</span></h1>
+      <p class="hero-description">“เราเชื่อว่าทุกภาพ ทุกคลิป มีเรื่องราวของมัน
+หน้าที่ของเราคือทำให้มันพูดได้อย่างมีสไตล์”</p>
+      <div class="hero-cta">
+        <a href="#portfolio" class="btn btn-primary">ดูผลงานทั้งหมด</a>
+        <a href="#pricing" class="btn btn-secondary">ขอใบเสนอราคา</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Portfolio Section -->
+<section class="section portfolio-section" id="portfolio" data-section="portfolio">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">ผลงาน<span class="text-gradient">วิดีโอ</span></h2>
+      <p class="section-subtitle">ผลงานวิดีโอและภาพเคลื่อนไหวจากหลากหลายแนว</p>
+    </div>
+
+    <div id="portfolioContainer">
+      <!-- Portfolio categories will be generated by JavaScript -->
+    </div>
+  </div>
+</section>
+
+<!-- Graphic Works Section -->
+<section class="section graphic-works" id="graphic-works" data-section="graphic-works">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">ผลงาน<span class="text-gradient">กราฟิก</span></h2>
+      <p class="section-subtitle">ออกแบบกราฟิกที่พูดแทนแบรนด์ของคุณ</p>
+    </div>
+
+    <div class="graphic-grid" id="graphicWorksGrid">
+      <!-- Graphic works will be generated by JavaScript -->
+    </div>
+  </div>
+</section>
+
+<!-- Services Section -->
+<section class="section" id="services" data-section="services">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">บริการ<span class="text-gradient">ของเรา</span></h2>
+      <p class="section-subtitle">โซลูชั่นครีเอทีฟที่ครอบคลุมสำหรับทุกความต้องการ</p>
+    </div>
+
+    <div class="grid-3">
+      <div class="card reveal">
+        <div class="card-icon">🎬</div>
+        <h3 class="card-title">ตัดต่อวิดีโอทุกประเภท</h3>
+        <p class="card-text">ผลิตวิดีโอคุณภาพสูงครบทุกขั้นตอน ตั้งแต่แนวคิดจนถึงตัดต่อ</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">✨</div>
+        <h3 class="card-title">โมชั่นกราฟิก</h3>
+        <p class="card-text">สร้างกราฟิกเคลื่อนไหวและเอฟเฟกต์ภาพที่ทำให้แบรนด์มีชีวิตชีวา</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">🎨</div>
+        <h3 class="card-title">ออกแบบกราฟิก</h3>
+        <p class="card-text">ดีไซน์กราฟิกที่พูดแทนตัวตนของแบรนด์คุณ สำหรับทุกแพลตฟอร์ม</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">📱</div>
+        <h3 class="card-title">คอนเทนต์โซเชียลมีเดีย</h3>
+        <p class="card-text">สร้างคอนเทนต์ที่โดดเด่นเพื่อเพิ่มการมีส่วนร่วมบนโซเชียลมีเดีย</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">🤖</div>
+        <h3 class="card-title">นำ AI มาประยุกต์ใช้</h3>
+        <p class="card-text">ใช้ปัญญาประดิษฐ์เพื่อสร้างประสบการณ์ภาพที่ล้ำสมัยและโดดเด่น</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">📊</div>
+        <h3 class="card-title">กลยุทธ์ครีเอทีฟ</h3>
+        <p class="card-text">วางแผนกลยุทธ์ครีเอทีฟที่สอดคล้องกับเป้าหมายทางธุรกิจของคุณ</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="section pricing-section" id="pricing" data-section="pricing">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">แพ็กเกจ &amp; <span class="text-gradient">ราคาพิเศษ</span></h2>
+      <p class="section-subtitle">เลือกแพ็กเกจที่เหมาะกับความต้องการครีเอทีฟของคุณ</p>
+    </div>
+
+    <div class="pricing-tabs">
+      <button class="pricing-tab" aria-selected="true" data-tab="graphic">งานกราฟิก</button>
+      <button class="pricing-tab" aria-selected="false" data-tab="video">งานตัดต่อวิดีโอ</button>
+    </div>
+
+    <!-- Graphic Design Pricing -->
+    <div class="pricing-tab-content active" id="graphicTab">
+      <div class="pricing-grid">
+        <div class="card pricing-card reveal">
+          <div class="halloween-badge">🎃 Halloween Promo</div>
+          <div class="pricing-header">
+            <h3 class="pricing-title">ออกแบบภาพโฆษณา</h3>
+            <p class="pricing-description">ภาพโฆษณาและแบนเนอร์คุณภาพสูง</p>
+            <div class="pricing-price">
+              <span class="price-now">300</span>
+              <span class="price-unit">บาท/ภาพ</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li class="pricing-feature">ไฟล์คุณภาพสูง PNG/JPG</li>
+            <li class="pricing-feature">ขนาดเหมาะสมกับแต่ละแพลตฟอร์ม</li>
+            <li class="pricing-feature">2 รอบแก้ไข</li>
+          </ul>
+          <div class="pricing-cta">
+            <a class="btn btn-primary" href="#contact">ขอใบเสนอราคา</a>
+          </div>
+        </div>
+
+        <div class="card pricing-card reveal">
+          <div class="halloween-badge">🎃 Halloween Promo</div>
+          <div class="pricing-header">
+            <h3 class="pricing-title">เหมา 10 ภาพ</h3>
+            <p class="pricing-description">แพ็กเกจประหยัดสำหรับแคมเปญยาว</p>
+            <div class="pricing-price">
+              <span class="price-old">2,700</span>
+              <span class="price-now">2,350</span>
+              <span class="price-unit">บาท</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li class="pricing-feature">ประหยัดกว่า 350 บาท</li>
+            <li class="pricing-feature">จัดส่งเป็นรอบได้</li>
+            <li class="pricing-feature">3 รอบแก้ไขต่อภาพ</li>
+          </ul>
+          <div class="pricing-cta">
+            <a class="btn btn-primary" href="#contact">ขอใบเสนอราคา</a>
+          </div>
+        </div>
+
+        <div class="card pricing-card reveal">
+          <div class="halloween-badge">🎃 Halloween Promo</div>
+          <div class="pricing-header">
+            <h3 class="pricing-title">เหมา 15 ภาพ</h3>
+            <p class="pricing-description">เหมาะสำหรับแบรนด์ที่ต้องการคอนเทนต์สม่ำเสมอ</p>
+            <div class="pricing-price">
+              <span class="price-old">3,800</span>
+              <span class="price-now">3,300</span>
+              <span class="price-unit">บาท</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li class="pricing-feature">ประหยัดกว่า 500 บาท</li>
+            <li class="pricing-feature">คอนซิสเทนซีของสไตล์</li>
+            <li class="pricing-feature">4 รอบแก้ไขต่อภาพ</li>
+          </ul>
+          <div class="pricing-cta">
+            <a class="btn btn-primary" href="#contact">ขอใบเสนอราคา</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video Editing Pricing -->
+    <div class="pricing-tab-content" id="videoTab">
+      <div class="pricing-grid">
+        <div class="card pricing-card reveal">
+          <div class="halloween-badge">🎃 Halloween Promo</div>
+          <div class="pricing-header">
+            <h3 class="pricing-title">คลิปสั้น (0–2 นาที)</h3>
+            <p class="pricing-description">เหมาะสำหรับรีลส์ TikTok, IG Story</p>
+            <div class="pricing-price">
+              <span class="price-old">1,000</span>
+              <span class="price-now">650</span>
+              <span class="price-unit">บาท/คลิป</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li class="pricing-feature">ตัดต่อพื้นฐาน + เอฟเฟกต์</li>
+            <li class="pricing-feature">เสียงและซับไตเติลพื้นฐาน</li>
+            <li class="pricing-feature">2 รอบแก้ไข</li>
+          </ul>
+          <div class="pricing-cta">
+            <a class="btn btn-primary" href="#contact">ขอใบเสนอราคา</a>
+          </div>
+        </div>
+
+        <div class="card pricing-card reveal">
+          <div class="halloween-badge">🎃 Halloween Promo</div>
+          <div class="pricing-header">
+            <h3 class="pricing-title">คลิปขนาดกลาง (2–5 นาที)</h3>
+            <p class="pricing-description">เหมาะสำหรับ YouTube, Facebook</p>
+            <div class="pricing-price">
+              <span class="price-old">1,700</span>
+              <span class="price-now">1,350</span>
+              <span class="price-unit">บาท/คลิป</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li class="pricing-feature">ตัดต่อขั้นสูง + มูชันกราฟิก</li>
+            <li class="pricing-feature">คัลเลอร์เกรดและเสียงครบวงจร</li>
+            <li class="pricing-feature">3 รอบแก้ไข</li>
+          </ul>
+          <div class="pricing-cta">
+            <a class="btn btn-primary" href="#contact">ขอใบเสนอราคา</a>
+          </div>
+        </div>
+
+        <div class="card pricing-card reveal">
+          <div class="halloween-badge">🎃 Halloween Promo</div>
+          <div class="pricing-header">
+            <h3 class="pricing-title">คลิปยาว (5–10 นาที)</h3>
+            <p class="pricing-description">เหมาะสำหรับคอนเทนต์พรีเมียม</p>
+            <div class="pricing-price">
+              <span class="price-old">2,500</span>
+              <span class="price-now">2,150</span>
+              <span class="price-unit">บาท/คลิป</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li class="pricing-feature">ตัดต่อครบวงจร + เอฟเฟกต์พิเศษ</li>
+            <li class="pricing-feature">เสียงระดับมืออาชีพ</li>
+            <li class="pricing-feature">4 รอบแก้ไข</li>
+          </ul>
+          <div class="pricing-cta">
+            <a class="btn btn-primary" href="#contact">ขอใบเสนอราคา</a>
+          </div>
+        </div>
+
+        <div class="card pricing-card reveal">
+          <div class="halloween-badge">🎃 Halloween Promo</div>
+          <div class="pricing-header">
+            <h3 class="pricing-title">แพ็กเกจ 10 คลิปสั้น</h3>
+            <p class="pricing-description">สำหรับแบรนด์ที่ต้องการคอนเทนต์สม่ำเสมอ</p>
+            <div class="pricing-price">
+              <span class="price-old">7,500</span>
+              <span class="price-now">6,500</span>
+              <span class="price-unit">บาท</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li class="pricing-feature">ประหยัด 1,000 บาท</li>
+            <li class="pricing-feature">คอนเทนต์ที่สอดคล้องกัน</li>
+            <li class="pricing-feature">จัดส่งเป็นรอบได้</li>
+          </ul>
+          <div class="pricing-cta">
+            <a class="btn btn-primary" href="#contact">ขอใบเสนอราคา</a>
+          </div>
+        </div>
+
+        <div class="card pricing-card reveal">
+          <div class="halloween-badge">🎃 Halloween Promo</div>
+          <div class="pricing-header">
+            <h3 class="pricing-title">แพ็กเกจ 10 คลิปกลาง</h3>
+            <p class="pricing-description">สมดุลระหว่างคุณภาพและความคุ้มค่า</p>
+            <div class="pricing-price">
+              <span class="price-old">14,500</span>
+              <span class="price-now">13,500</span>
+              <span class="price-unit">บาท</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li class="pricing-feature">ประหยัด 1,000 บาท</li>
+            <li class="pricing-feature">คุณภาพระดับมืออาชีพ</li>
+            <li class="pricing-feature">จัดส่งเป็นรอบได้</li>
+          </ul>
+          <div class="pricing-cta">
+            <a class="btn btn-primary" href="#contact">ขอใบเสนอราคา</a>
+          </div>
+        </div>
+
+        <div class="card pricing-card reveal">
+          <div class="halloween-badge">🎃 Halloween Promo</div>
+          <div class="pricing-header">
+            <h3 class="pricing-title">แพ็กเกจ 10 คลิปยาว</h3>
+            <p class="pricing-description">สำหรับคอนเทนต์พรีเมียมต่อเนื่อง</p>
+            <div class="pricing-price">
+              <span class="price-old">19,000</span>
+              <span class="price-now">18,000</span>
+              <span class="price-unit">บาท</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li class="pricing-feature">ประหยัด 1,000 บาท</li>
+            <li class="pricing-feature">คุณภาพระดับสูงสุด</li>
+            <li class="pricing-feature">จัดส่งเป็นรอบได้</li>
+          </ul>
+          <div class="pricing-cta">
+            <a class="btn btn-primary" href="#contact">ขอใบเสนอราคา</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="pricing-note">* ราคาเฉพาะโปรโมชั่นฮาโลวีนเท่านั้น (เงื่อนไขเป็นไปตามที่ทางร้านกําหนด) — สิ้นสุด 31 ตุลาคม <span id="currentYear"></span></p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer id="contact" data-section="contact">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="footer-logo">POETRY PIXEL</a>
+        <p class="footer-description">เราเปลี่ยนแนวคิดให้เป็นเรื่องราวที่ตราตรึงใจ ด้วยการผลิตวิดีโอคุณภาพสูง กราฟิกเคลื่อนไหว และประสบการณ์แบรนด์ที่สวยงาม</p>
+        <div class="social-links">
+          <a href="https://www.facebook.com/Poetry.Pixel1/" class="social-link" aria-label="Facebook" target="_blank" rel="noopener">FB</a>
+          <a href="#" class="social-link" aria-label="Instagram" target="_blank" rel="noopener">IG</a>
+          <a href="#" class="social-link" aria-label="YouTube" target="_blank" rel="noopener">YT</a>
+          <a href="#" class="social-link" aria-label="LINE" target="_blank" rel="noopener">LINE</a>
+        </div>
+      </div>
+      <div>
+        <h3 class="footer-heading">บริการ</h3>
+        <ul class="footer-links">
+          <li class="footer-link"><a href="#services">ผลิตวิดีโอ</a></li>
+          <li class="footer-link"><a href="#services">กราฟิกเคลื่อนไหว</a></li>
+          <li class="footer-link"><a href="#services">ออกแบบกราฟิก</a></li>
+          <li class="footer-link"><a href="#services">คอนเทนต์โซเชียลมีเดีย</a></li>
+          <li class="footer-link"><a href="#services">นำ AI มาประยุกต์ใช้</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-heading">บริษัท</h3>
+        <ul class="footer-links">
+          <li class="footer-link"><a href="#portfolio">ผลงานวิดีโอ</a></li>
+          <li class="footer-link"><a href="#graphic-works">งานกราฟิก</a></li>
+          <li class="footer-link"><a href="#pricing">ราคา</a></li>
+          <li class="footer-link"><a href="#contact">ติดต่อ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-heading">ติดต่อ</h3>
+        <ul class="footer-links">
+          <li class="footer-link"><a href="mailto:poetrypixel1@gmail.com
+">poetrypixel1@gmail.com
+</a></li>
+          <li class="footer-link"><a href="tel:062-385-7817">062-385-7817</a></li>
+          <li class="footer-link"><a href="#">กรุงเทพฯ, ประเทศไทย</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-cta">
+      <p style="font-size: 1.25rem; margin-bottom: 1rem; font-weight: 600;">สนใจทักเข้ามาสอบถามได้เลย</p>
+      <a href="#contact" class="btn btn-primary">เริ่มเลย</a>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2024 Poetry Pixel Creative Studio. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Promotion Popup -->
+<div class="promotion-popup" id="promotionPopup">
+  <div class="popup-content">
+    <div class="popup-header">
+      <div class="popup-logo">POETRY PIXEL</div>
+      <button class="popup-close" id="popupClose" aria-label="Close popup">×</button>
+    </div>
+    <div class="popup-body">
+      <img src="https://drive.google.com/thumbnail?id=19roCjQBTvtKP7bxu0-3hsGRRUQgdJHO8&sz=w1000" alt="โปรโมชั่นฮาโลวีน - รับส่วนพิเศษสำหรับงานวิดีโอและกราฟิก" class="popup-image" id="popupImage" width="500" height="281" loading="lazy" decoding="async">
+      <h3 class="popup-title">🎃 โปรโมชั่นฮาโลวีน</h3>
+      <p class="popup-text">รับส่วนพิเศษสำหรับโปรเจกต์ครีเอทีฟช่วงฮาโลวีนนี้ ราคาพิเศษสำหรับงานกราฟิกและวิดีโอ</p>
+      <p class="popup-expiry">โปรโมชั่นหมดอายุ: <strong id="popupExpiry">31 ตุลาคม 2024</strong></p>
+      <a class="btn btn-primary popup-cta" href="#pricing">รับโปรตอนนี้</a>
+    </div>
+  </div>
+</div>
+
+<!-- Popup Manager Panel -->
+<div class="manager-panel" id="popupManager">
+  <div class="panel-header">
+    <h3 class="panel-title">Popup Manager</h3>
+    <button class="panel-close" id="managerClose" aria-label="Close manager">×</button>
+  </div>
+  <div class="panel-body">
+    <p>Popup Manager - Add, edit, and manage promotional popups</p>
+    <div class="analytics-actions">
+      <button class="action-btn" onclick="addSamplePromotion()">Add Sample Promotion</button>
+    </div>
+  </div>
+</div>
+
+<!-- Analytics Panel -->
+<div class="manager-panel" id="analyticsDashboard">
+  <div class="panel-header">
+    <h3 class="panel-title">Analytics Dashboard</h3>
+    <button class="panel-close" id="analyticsClose" aria-label="Close analytics">×</button>
+  </div>
+  <div class="panel-body">
+    <div class="analytics-stats" id="analyticsStats">
+      <!-- Stats will be populated by JavaScript -->
+    </div>
+    <div class="analytics-list" id="analyticsList">
+      <!-- Analytics items will be populated by JavaScript -->
+    </div>
+    <div class="analytics-actions">
+      <button class="action-btn" id="exportAnalytics">Export JSON</button>
+      <button class="action-btn delete" id="clearAnalytics">Clear Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- CMS Editor Panel -->
+<div class="cms-editor" id="portfolioEditor">
+  <div class="panel-header">
+    <h3 class="panel-title">Portfolio Editor (โหมดผู้เชี่ยวชาญ)</h3>
+    <button class="panel-close" id="editorClose" aria-label="Close editor">×</button>
+  </div>
+  <div class="panel-body">
+    <p>แก้ไขข้อมูลผลงานในรูปแบบ JSON (สำหรับผู้เชี่ยวชาญ):</p>
+    <textarea class="cms-textarea" id="editorTextarea"></textarea>
+    <div class="cms-actions">
+      <button class="btn btn-primary" id="validateJson">ตรวจสอบโครงสร้าง</button>
+      <button class="btn btn-primary" id="saveJson">บันทึกการเปลี่ยนแปลง</button>
+      <button class="btn btn-secondary" id="importJson">นำเข้าข้อมูล</button>
+      <button class="btn btn-secondary" id="exportJson">ดาวน์โหลดข้อมูล</button>
+      <button class="btn btn-secondary" id="clearJson">ล้างข้อมูลกำหนดเอง</button>
+    </div>
+    <div id="editorStatus" style="margin-top: 1rem;"></div>
+  </div>
+</div>
+
+<!-- Content Editor Panel -->
+<div class="content-editor" id="contentEditor">
+  <div class="editor-header">
+    <h3 class="editor-title">แก้ไขเนื้อหา</h3>
+    <button class="editor-close" id="contentEditorClose" aria-label="Close content editor">×</button>
+  </div>
+  <div class="editor-body">
+    <div class="editor-tabs">
+      <button class="editor-tab active" data-tab="highlight">ผลงานเด่น</button>
+      <button class="editor-tab" data-tab="commercial">งานโฆษณา</button>
+      <button class="editor-tab" data-tab="shortform">คอนเทนต์สั้น</button>
+      <button class="editor-tab" data-tab="film">ภาพยนตร์สั้นและสารคดี</button>
+      <button class="editor-tab" data-tab="tiktok">TikTok</button>
+      <button class="editor-tab" data-tab="graphic">งานกราฟิก</button>
+    </div>
+
+    <div class="editor-section active" id="highlightSection">
+      <div class="item-list" id="highlightList">
+        <!-- Items will be populated by JavaScript -->
+      </div>
+      <button class="btn btn-primary" onclick="showAddForm('highlight')">เพิ่มรายการ</button>
+    </div>
+
+    <div class="editor-section" id="commercialSection">
+      <div class="item-list" id="commercialList">
+        <!-- Items will be populated by JavaScript -->
+      </div>
+      <button class="btn btn-primary" onclick="showAddForm('commercial')">เพิ่มรายการ</button>
+    </div>
+
+    <div class="editor-section" id="shortformSection">
+      <div class="item-list" id="shortformList">
+        <!-- Items will be populated by JavaScript -->
+      </div>
+      <button class="btn btn-primary" onclick="showAddForm('shortform')">เพิ่มรายการ</button>
+    </div>
+
+    <div class="editor-section" id="filmSection">
+      <div class="item-list" id="filmList">
+        <!-- Items will be populated by JavaScript -->
+      </div>
+      <button class="btn btn-primary" onclick="showAddForm('film')">เพิ่มรายการ</button>
+    </div>
+
+    <div class="editor-section" id="tiktokSection">
+      <div class="item-list" id="tiktokList">
+        <!-- Items will be populated by JavaScript -->
+      </div>
+      <button class="btn btn-primary" onclick="showAddForm('tiktok')">เพิ่มรายการ</button>
+    </div>
+
+    <div class="editor-section" id="graphicSection">
+      <div class="item-list" id="graphicList">
+        <!-- Items will be populated by JavaScript -->
+      </div>
+      <button class="btn btn-primary" onclick="showAddForm('graphic')">เพิ่มรายการ</button>
+    </div>
+
+    <!-- Add/Edit Form -->
+    <div class="editor-section" id="addFormSection">
+      <h4 id="formTitle">เพิ่มรายการใหม่</h4>
+      <div class="form-group">
+        <label class="form-label" for="itemTitle">ชื่อผลงาน</label>
+        <input type="text" class="form-input" id="itemTitle" placeholder="กรอกชื่อผลงาน">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="itemUrl">ลิงก์ URL</label>
+        <input type="text" class="form-input" id="itemUrl" placeholder="https://...">
+        <small style="color: var(--text-muted); font-size: 0.8rem;">รองรับ: YouTube, Google Drive, TikTok</small>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="itemDescription">คำอธิบาย (ไม่บังคับ)</label>
+        <textarea class="form-input form-textarea" id="itemDescription" placeholder="กรอกคำอธิบายผลงาน"></textarea>
+      </div>
+      
+      <div class="thumbnail-preview" id="thumbnailPreview">
+        <!-- Thumbnail preview will be shown here -->
+      </div>
+      
+      <div class="editor-actions">
+        <button class="btn btn-primary" id="saveItem">บันทึก</button>
+        <button class="btn btn-secondary" id="cancelAdd">ยกเลิก</button>
+      </div>
+    </div>
+
+    <!-- Advanced JSON Section -->
+    <div class="editor-section" id="advancedSection">
+      <h4>โหมดผู้เชี่ยวชาญ</h4>
+      <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+        สำหรับการจัดการข้อมูลขั้นสูงในรูปแบบ JSON
+      </p>
+      <div class="editor-actions">
+        <button class="btn btn-secondary" onclick="openAdvancedEditor()">เปิดโหมด JSON</button>
+        <button class="btn btn-secondary" onclick="exportPortfolioData()">ดาวน์โหลดข้อมูล</button>
+        <button class="btn btn-secondary" onclick="importPortfolioData()">นำเข้าข้อมูล</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Password Modal -->
+<div class="password-modal" id="passwordModal">
+  <div class="password-content">
+    <div class="panel-header">
+      <h3 class="panel-title">ยืนยันตัวตน</h3>
+    </div>
+    <div class="panel-body">
+      <div id="passwordSetup" style="display: none;">
+        <p>ตั้งรหัสผ่านสำหรับการแก้ไขเนื้อหา:</p>
+        <div class="form-group">
+          <label class="form-label" for="newPassword">รหัสผ่านใหม่</label>
+          <input type="password" class="form-input" id="newPassword" placeholder="กรอกรหัสผ่าน">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">ยืนยันรหัสผ่าน</label>
+          <input type="password" class="form-input" id="confirmPassword" placeholder="กรอกรหัสผ่านอีกครั้ง">
+        </div>
+        <div class="editor-actions">
+          <button class="btn btn-primary" onclick="setupPassword()">ตั้งรหัสผ่าน</button>
+        </div>
+      </div>
+      
+      <div id="passwordLogin">
+        <p>กรุณากรอกรหัสผ่าน:</p>
+        <div class="form-group">
+          <label class="form-label" for="password">รหัสผ่าน</label>
+          <input type="password" class="form-input" id="password" placeholder="กรอกรหัสผ่าน">
+        </div>
+        <div class="editor-actions">
+          <button class="btn btn-primary" onclick="verifyPassword()">ยืนยัน</button>
+          <button class="btn btn-secondary" onclick="closePasswordModal()">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Edit Button -->
+<button class="edit-button" id="editButton" aria-label="แก้ไขเนื้อหา">✏️</button>
+
+<!-- Analytics Button -->
+<button class="btn btn-secondary" id="analyticsBtn" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">Analytics</button>
+
+<script>
+    // CMS-ready JSON Structure for Future Backend/API
+    const promoData = {
+        items: [/* list รูปโปรฯ จาก pp_promotions */],
+        currentIndexKey: 'pp_promo_current',
+        storageKey: 'pp_promotions',
+        snoozeKey: 'pp_popup_disabled_until',
+        expiry: { month: 10, day: 31, year: new Date().getFullYear() }
+    };
+
+    // Portfolio Data from section2.html (Source of Truth)
+    const portfolioData = {
+        highlight: [
+            { 
+                title: "แคมเปญโฆษณา TechVision", 
+                url: "https://youtu.be/Znybs8YddeU", 
+                type: "youtube",
+                description: "วิดีโอโฆษณาระดับพรีเมียมสำหรับแบรนด์เทคโนโลยี"
+            },
+            { 
+                title: "วิดีโอโปรโมทแบรนด์พรีเมียม", 
+                url: "https://youtu.be/LPFEhuNYmIA", 
+                type: "youtube",
+                description: "สร้างภาพลักษณ์แบรนด์ด้วยวิดีโอคุณภาพสูง"
+            },
+            { 
+                title: "คอนเทนต์โซเชียลมีเดียไฮไลท์", 
+                url: "https://youtu.be/OpwSI3ov7NI", 
+                type: "youtube",
+                description: "คอนเทนต์ไวรัลสำหรับแพลตฟอร์มโซเชียลมีเดีย"
+            }
+        ],
+        commercial: [
+            { 
+                title: "แคมเปญโฆษณาแบรนด์ A", 
+                url: "https://youtu.be/Znybs8YddeU", 
+                type: "youtube",
+                description: "แคมเปญโฆษณาเต็มรูปแบบ"
+            },
+            { 
+                title: "วิดีโอโปรโมทผลิตภัณฑ์ B", 
+                url: "https://youtu.be/BP-v3Qacqkk", 
+                type: "youtube",
+                description: "นำเสนอคุณสมบัติผลิตภัณฑ์"
+            }
+        ],
+        shortform: [
+            { 
+                title: "รีลส์ TikTok สั้น", 
+                url: "https://youtu.be/LPFEhuNYmIA", 
+                type: "youtube",
+                description: "คอนเทนต์สั้นสำหรับ TikTok"
+            },
+            { 
+                title: "คลิปสั้น Instagram", 
+                url: "https://youtube.com/shorts/TVIm8bYkTaE", 
+                type: "youtube",
+                description: "รีลส์สำหรับ Instagram"
+            }
+        ],
+        film: [
+            { 
+                title: "สารคดีแบรนด์สินค้าเกษตร", 
+                url: "https://youtu.be/dQw4w9WgXcQ", 
+                type: "youtube",
+                description: "เรื่องราวเบื้องหลังแบรนด์สินค้าเกษตรอินทรีย์"
+            },
+            { 
+                title: "ภาพยนตร์สั้นเรื่อง 'ทางเลือก'", 
+                url: "https://youtu.be/dQw4w9WgXcQ", 
+                type: "youtube",
+                description: "เรื่องราวการตัดสินใจที่เปลี่ยนชีวิต"
+            }
+        ],
+        tiktok: [
+            { 
+                title: "แคมเปญ TikTok แฟชั่น", 
+                url: "https://www.tiktok.com/@poetrypixel/video/1234567890", 
+                type: "tiktok",
+                description: "คอนเทนต์ไวรัลสำหรับแบรนด์แฟชั่น"
+            },
+            { 
+                title: "รีลส์โปรโมทร้านค้า", 
+                url: "https://www.tiktok.com/@poetrypixel/video/1234567891", 
+                type: "tiktok",
+                description: "สร้างการมีส่วนร่วมสำหรับธุรกิจร้านค้า"
+            }
+        ],
+        graphic: [
+            { 
+                title: "ออกแบบแบรนด์ไอเดนติตี้", 
+                url: "https://drive.google.com/file/d/1ABC123def456/view", 
+                type: "drive",
+                description: "ระบบภาพลักษณ์แบรนด์ครบวงจร"
+            },
+            { 
+                title: "กราฟิกโซเชียลมีเดีย", 
+                url: "https://drive.google.com/file/d/2DEF456ghi789/view", 
+                type: "drive",
+                description: "คอนเทนต์กราฟิกสำหรับทุกแพลตฟอร์ม"
+            }
+        ]
+    };
+
+    const pricingData = {
+        graphic: [
+            { plan:'single', now:300, unit:'/ภาพ', bullets:['ไฟล์คุณภาพสูง','ขนาดตามแพลตฟอร์ม','2 รอบแก้ไข'] },
+            { plan:'bundle10', old:2700, now:2350, bullets:['ประหยัดกว่า 350 บาท','จัดส่งเป็นรอบได้','3 รอบแก้ไข/ภาพ'] },
+            { plan:'bundle15', old:3800, now:3300, bullets:['ประหยัดกว่า 500 บาท','คอนซิสเทนซีของสไตล์','4 รอบแก้ไข/ภาพ'] }
+        ],
+        video: [
+            { plan:'short', old:1000, now:650, unit:'/คลิป', bullets:['ตัดต่อพื้นฐาน+เอฟเฟกต์','เสียง+ซับพื้นฐาน','2 รอบแก้ไข'] },
+            { plan:'medium', old:1700, now:1350, unit:'/คลิป', bullets:['ตัดต่อขั้นสูง+มูชัน','คัลเลอร์เกรด+เสียง','3 รอบแก้ไข'] },
+            { plan:'long', old:2500, now:2150, unit:'/คลิป', bullets:['เอฟเฟกต์พิเศษ','เสียงมืออาชีพ','4 รอบแก้ไข'] },
+            { plan:'short10', old:7500, now:6500, unit:'', bullets:['ประหยัด 1,000 บาท','คอนเทนต์สอดคล้อง','จัดส่งเป็นรอบได้'] },
+            { plan:'medium10', old:14500, now:13500, unit:'', bullets:['ประหยัด 1,000 บาท','คุณภาพมืออาชีพ','จัดส่งเป็นรอบได้'] },
+            { plan:'long10', old:19000, now:18000, unit:'', bullets:['ประหยัด 1,000 บาท','คุณภาพสูงสุด','จัดส่งเป็นรอบได้'] }
+        ],
+        note:'ราคาโปรฮาโลวีน (ยังไม่รวมถ่ายทำ/สต็อกฟุต/พากย์เสียงพิเศษ) — สิ้นสุด 31 ตุลาคม ' + new Date().getFullYear()
+    };
+
+    // Storage Keys
+    const PROMOTION_POPUP_KEY = 'pp_promotions';
+    const CURRENT_PROMO_KEY = 'pp_promo_current'; 
+    const POPUP_DISABLED_KEY = 'pp_popup_disabled_until';
+    const ANALYTICS_KEY = 'pp_analytics';
+    const PORTFOLIO_CUSTOM_KEY = 'pp_portfolio_custom';
+    const ADMIN_PASS_KEY = 'pp_admin_pass';
+
+    // Global variables for content editor
+    let currentEditingCategory = '';
+    let currentEditingIndex = -1;
+    let isEditMode = false;
+
+    // Initialize application
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeApp();
+    });
+
+    function initializeApp() {
+        initializeStorage();
+        trackUserInteraction('page_view', 'navigation');
+        initializeNavigation();
+        initializePortfolio();
+        initializeGraphicWorks();
+        initializePricingTabs();
+        initializePopupSystem();
+        initializeAnalytics();
+        initializeRevealAnimations();
+        initializeHotkeys();
+        initializeContentEditor();
+        
+        // Show popup after delay
+        setTimeout(showPromotionPopup, 2000);
+    }
+
+    function initializeStorage() {
+        if (!localStorage.getItem(PROMOTION_POPUP_KEY)) {
+            localStorage.setItem(PROMOTION_POPUP_KEY, JSON.stringify([{
+                id: 'halloween-2024',
+                name: 'Halloween Promo',
+                image: 'https://drive.google.com/thumbnail?id=19roCjQBTvtKP7bxu0-3hsGRRUQgdJHO8&sz=w1000',
+                expiry: '2024-10-31',
+                active: true
+            }]));
+        }
+        if (!localStorage.getItem(CURRENT_PROMO_KEY)) {
+            localStorage.setItem(CURRENT_PROMO_KEY, '0');
+        }
+        if (!localStorage.getItem(ANALYTICS_KEY)) {
+            localStorage.setItem(ANALYTICS_KEY, JSON.stringify([]));
+        }
+    }
+
+    function initializeNavigation() {
+        const nav = document.getElementById('mainNav');
+        const mobileNavToggle = document.getElementById('mobileNavToggle');
+        const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+        const mobileNav = document.getElementById('mobileNav');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+        
+        mobileNavToggle.addEventListener('click', () => {
+            mobileNavOverlay.classList.add('active');
+            mobileNav.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            trackUserInteraction('mobile_nav_open', 'navigation');
+        });
+        
+        function closeMobileNav() {
+            mobileNavOverlay.classList.remove('active');
+            mobileNav.classList.remove('active');
+            document.body.style.overflow = '';
+            trackUserInteraction('mobile_nav_close', 'navigation');
+        }
+        
+        mobileNavOverlay.addEventListener('click', closeMobileNav);
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeMobileNav();
+            }
+        });
+        
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Track CTA clicks
+        document.querySelectorAll('.nav-cta, .hero-cta .btn, .mobile-nav-cta, .footer-cta .btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                trackUserInteraction('nav_click', 'navigation', 'cta');
+            });
+        });
+    }
+
+    function initializePortfolio() {
+        const portfolioContainer = document.getElementById('portfolioContainer');
+        
+        // Load custom data if available
+        const customData = loadCustomData();
+        const data = customData || portfolioData;
+        
+        const categories = [
+            { key: 'highlight', title: 'ผลงานเด่น', icon: '⭐' },
+            { key: 'commercial', title: 'งานโฆษณา', icon: '📺' },
+            { key: 'shortform', title: 'คอนเทนต์สั้น', icon: '⚡' },
+            { key: 'film', title: 'ภาพยนตร์สั้นและสารคดี', icon: '🎞️' },
+            { key: 'tiktok', title: 'TikTok', icon: '🎵' }
+        ];
+
+        portfolioContainer.innerHTML = '';
+        
+        categories.forEach(category => {
+            const items = data[category.key];
+            if (items && items.length > 0) {
+                const categorySection = createPortfolioCategory(category, items);
+                portfolioContainer.appendChild(categorySection);
+            }
+        });
+        
+        initializeRevealAnimations();
+    }
+
+    function createPortfolioCategory(category, items) {
+        const section = document.createElement('div');
+        section.className = 'portfolio-category reveal';
+        
+        const categoryHeader = document.createElement('div');
+        categoryHeader.className = 'category-header';
+        categoryHeader.innerHTML = `
+            <div class="category-icon">${category.icon}</div>
+            <h3 class="category-title">${category.title}</h3>
+        `;
+        
+        const portfolioGrid = document.createElement('div');
+        portfolioGrid.className = items.length > 3 ? 'portfolio-grid grid-3' : 'portfolio-grid grid-2';
+        
+        items.forEach((item, index) => {
+            const card = createPortfolioCard(item, index === 0 && category.key === 'highlight', category.key, index);
+            portfolioGrid.appendChild(card);
+        });
+        
+        section.appendChild(categoryHeader);
+        section.appendChild(portfolioGrid);
+        
+        return section;
+    }
+
+    function createPortfolioCard(item, isFeatured = false, category = '', index = -1) {
+        const card = document.createElement('div');
+        card.className = `portfolio-card reveal ${isFeatured ? 'featured' : 'regular'}`;
+        
+        const thumbnailUrl = getThumbnail(item.url, item.type);
+        
+        card.innerHTML = `
+            <a href="${item.url}" target="_blank" rel="noopener" aria-label="View ${item.title}">
+                <img src="${thumbnailUrl}" alt="${item.title}" class="portfolio-thumbnail" width="${isFeatured ? '1200' : '400'}" height="${isFeatured ? '514' : '225'}" loading="lazy" decoding="async">
+                <div class="portfolio-overlay">
+                    <h4>${item.title}</h4>
+                    <p>${item.description}</p>
+                </div>
+            </a>
+            ${isEditMode ? `
+                <div class="edit-overlay">
+                    <div class="edit-actions">
+                        <button class="btn btn-primary" onclick="editItem('${category}', ${index})" aria-label="แก้ไข">แก้ไข</button>
+                        <button class="btn btn-secondary" onclick="moveItemUp('${category}', ${index})" aria-label="เลื่อนขึ้น">↑</button>
+                        <button class="btn btn-secondary" onclick="moveItemDown('${category}', ${index})" aria-label="เลื่อนลง">↓</button>
+                        <button class="btn btn-secondary delete" onclick="deleteItem('${category}', ${index})" aria-label="ลบ">ลบ</button>
+                    </div>
+                </div>
+            ` : ''}
+        `;
+        
+        card.querySelector('a').addEventListener('click', () => {
+            const label = item.type === 'tiktok' ? 'tiktok' : 'portfolio';
+            trackUserInteraction('portfolio_click', 'portfolio', label);
+        });
+        
+        return card;
+    }
+
+    function initializeGraphicWorks() {
+        const graphicGrid = document.getElementById('graphicWorksGrid');
+        
+        // Load custom data if available
+        const customData = loadCustomData();
+        const items = customData ? customData.graphic : portfolioData.graphic;
+        
+        graphicGrid.innerHTML = '';
+        
+        items.forEach((item, index) => {
+            const card = createGraphicCard(item, index);
+            graphicGrid.appendChild(card);
+        });
+        
+        initializeRevealAnimations();
+    }
+
+    function createGraphicCard(item, index) {
+        const card = document.createElement('div');
+        card.className = 'portfolio-card reveal';
+        
+        const thumbnailUrl = getThumbnail(item.url, item.type);
+        
+        card.innerHTML = `
+            <a href="${item.url}" target="_blank" rel="noopener" aria-label="View ${item.title}">
+                <img src="${thumbnailUrl}" alt="${item.title}" class="portfolio-thumbnail" width="400" height="225" loading="lazy" decoding="async">
+                <div class="portfolio-overlay">
+                    <h4>${item.title}</h4>
+                    <p>${item.description}</p>
+                    <button class="btn btn-primary" style="margin-top: 0.5rem;">ดูภาพเต็ม</button>
+                </div>
+            </a>
+            ${isEditMode ? `
+                <div class="edit-overlay">
+                    <div class="edit-actions">
+                        <button class="btn btn-primary" onclick="editItem('graphic', ${index})" aria-label="แก้ไข">แก้ไข</button>
+                        <button class="btn btn-secondary" onclick="moveItemUp('graphic', ${index})" aria-label="เลื่อนขึ้น">↑</button>
+                        <button class="btn btn-secondary" onclick="moveItemDown('graphic', ${index})" aria-label="เลื่อนลง">↓</button>
+                        <button class="btn btn-secondary delete" onclick="deleteItem('graphic', ${index})" aria-label="ลบ">ลบ</button>
+                    </div>
+                </div>
+            ` : ''}
+        `;
+        
+        card.querySelector('a').addEventListener('click', () => {
+            trackUserInteraction('graphic_click', 'portfolio', 'graphic');
+        });
+        
+        return card;
+    }
+
+    // Helper functions
+    function ytId(u) {
+        try {
+            const x = new URL(u);
+            if (x.hostname.includes('youtu.be')) return x.pathname.slice(1);
+            if (x.pathname.startsWith('/shorts/')) return x.pathname.split('/')[2] || x.pathname.split('/')[1];
+            return x.searchParams.get('v');
+        } catch(e) { return null; }
+    }
+    
+    function extractDriveId(u) {
+        const m = (u || "").match(/[-\w]{25,}/);
+        return m ? m[0] : null;
+    }
+    
+    function extractTikTokId(u) {
+        try {
+            const x = new URL(u);
+            const pathParts = x.pathname.split('/');
+            const videoIndex = pathParts.indexOf('video');
+            return videoIndex !== -1 && pathParts[videoIndex + 1] ? pathParts[videoIndex + 1] : null;
+        } catch(e) { return null; }
+    }
+    
+    function detectLinkType(url) {
+        if (!url) return 'unknown';
+        
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            return 'youtube';
+        } else if (url.includes('drive.google.com')) {
+            return 'drive';
+        } else if (url.includes('tiktok.com')) {
+            return 'tiktok';
+        } else {
+            return 'unknown';
+        }
+    }
+    
+    function getThumbnail(url, type) {
+        if (type === 'youtube') {
+            const videoId = ytId(url);
+            return videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgdmlld0JveD0iMCAwIDQwMCAyMjUiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMjUiIGZpbGw9IiNmMWYxZjEiLz48L3N2Zz4=';
+        } else if (type === 'drive') {
+            const driveId = extractDriveId(url);
+            return driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w1280` : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgdmlld0JveD0iMCAwIDQwMCAyMjUiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMjUiIGZpbGw9IiNmMWYxZjEiLz48L3N2Zz4=';
+        } else if (type === 'tiktok') {
+            // Use TikTok favicon as placeholder since getting actual thumbnails requires API
+            return 'https://www.tiktok.com/favicon.ico';
+        } else {
+            return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgdmlld0JveD0iMCAwIDQwMCAyMjUiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMjUiIGZpbGw9IiNmMWYxZjEiLz48L3N2Zz4=';
+        }
+    }
+
+    function initializePricingTabs() {
+        const pricingTabs = document.querySelectorAll('.pricing-tab');
+        const tabContents = document.querySelectorAll('.pricing-tab-content');
+        
+        // Set current year in pricing note
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        
+        pricingTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                pricingTabs.forEach(t => t.setAttribute('aria-selected', 'false'));
+                tab.setAttribute('aria-selected', 'true');
+                
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tabId}Tab`).classList.add('active');
+                
+                // Save active tab
+                localStorage.setItem('pricing_active_tab', tabId);
+                
+                trackUserInteraction('pricing_tab_switch', 'pricing', tabId);
+            });
+        });
+        
+        // Restore active tab
+        const savedTab = localStorage.getItem('pricing_active_tab');
+        if (savedTab) {
+            const tabToActivate = document.querySelector(`[data-tab="${savedTab}"]`);
+            if (tabToActivate) tabToActivate.click();
+        }
+        
+        // Track CTA clicks
+        document.querySelectorAll('.pricing-cta .btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                trackUserInteraction('pricing_cta_click', 'pricing');
+            });
+        });
+    }
+
+    function initializePopupSystem() {
+        const popup = document.getElementById('promotionPopup');
+        const popupClose = document.getElementById('popupClose');
+        const popupExpiry = document.getElementById('popupExpiry');
+        
+        // Set expiry date with current year
+        const currentYear = new Date().getFullYear();
+        const expiryDate = new Date(`${currentYear}-10-31`);
+        popupExpiry.textContent = expiryDate.toLocaleDateString('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        popupClose.addEventListener('click', closePopup);
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) closePopup();
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && popup.classList.contains('active')) {
+                closePopup();
+            }
+        });
+        
+        document.querySelector('.popup-cta').addEventListener('click', () => {
+            trackUserInteraction('popup_cta_click', 'promotion', 'halloween');
+        });
+        
+        function closePopup() {
+            popup.classList.remove('active');
+            const snoozeUntil = new Date();
+            snoozeUntil.setHours(snoozeUntil.getHours() + 24);
+            localStorage.setItem(POPUP_DISABLED_KEY, snoozeUntil.toISOString());
+            trackUserInteraction('popup_close', 'promotion', 'halloween');
+        }
+    }
+
+    function showPromotionPopup() {
+        const popup = document.getElementById('promotionPopup');
+        const disabledUntil = localStorage.getItem(POPUP_DISABLED_KEY);
+        
+        if (disabledUntil) {
+            const disabledTime = new Date(disabledUntil);
+            const now = new Date();
+            if (now < disabledTime) return;
+        }
+        
+        popup.classList.add('active');
+    }
+
+    function initializeAnalytics() {
+        const analyticsBtn = document.getElementById('analyticsBtn');
+        const analyticsPanel = document.getElementById('analyticsDashboard');
+        const analyticsClose = document.getElementById('analyticsClose');
+        const exportBtn = document.getElementById('exportAnalytics');
+        const clearBtn = document.getElementById('clearAnalytics');
+        
+        analyticsBtn.addEventListener('click', () => {
+            analyticsPanel.classList.toggle('active');
+            if (analyticsPanel.classList.contains('active')) {
+                updateAnalyticsDisplay();
+            }
+        });
+        
+        analyticsClose.addEventListener('click', () => {
+            analyticsPanel.classList.remove('active');
+        });
+        
+        analyticsPanel.addEventListener('click', (e) => {
+            if (e.target === analyticsPanel) {
+                analyticsPanel.classList.remove('active');
+            }
+        });
+        
+        exportBtn.addEventListener('click', exportAnalytics);
+        clearBtn.addEventListener('click', clearAnalytics);
+    }
+
+    function updateAnalyticsDisplay() {
+        const analyticsData = JSON.parse(localStorage.getItem(ANALYTICS_KEY) || '[]');
+        const statsContainer = document.getElementById('analyticsStats');
+        const listContainer = document.getElementById('analyticsList');
+        
+        const totalEvents = analyticsData.length;
+        const eventsByCategory = {};
+        const eventsByAction = {};
+        
+        analyticsData.forEach(event => {
+            eventsByCategory[event.category] = (eventsByCategory[event.category] || 0) + 1;
+            eventsByAction[event.action] = (eventsByAction[event.action] || 0) + 1;
+        });
+        
+        statsContainer.innerHTML = `
+            <div class="stat-card">
+                <div class="stat-value">${totalEvents}</div>
+                <div class="stat-label">เหตุการณ์ทั้งหมด</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${Object.keys(eventsByCategory).length}</div>
+                <div class="stat-label">หมวดหมู่</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${Object.keys(eventsByAction).length}</div>
+                <div class="stat-label">การกระทำ</div>
+            </div>
+        `;
+        
+        const recentEvents = analyticsData.slice(-10).reverse();
+        listContainer.innerHTML = recentEvents.map(event => `
+            <div class="analytics-item">
+                <div style="font-weight: 600;">${event.action}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">
+                    ${event.category}${event.label ? ` • ${event.label}` : ''}
+                </div>
+                <div style="font-size: 0.7rem; color: var(--text-light);">
+                    ${new Date(event.timestamp).toLocaleString('th-TH')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function trackUserInteraction(action, category, label = '') {
+        const analyticsData = JSON.parse(localStorage.getItem(ANALYTICS_KEY) || '[]');
+        
+        const event = {
+            action,
+            category,
+            label,
+            timestamp: new Date().toISOString()
+        };
+        
+        analyticsData.push(event);
+        localStorage.setItem(ANALYTICS_KEY, JSON.stringify(analyticsData));
+        
+        if (document.getElementById('analyticsDashboard').classList.contains('active')) {
+            updateAnalyticsDisplay();
+        }
+    }
+
+    function exportAnalytics() {
+        const analyticsData = JSON.parse(localStorage.getItem(ANALYTICS_KEY) || '[]');
+        const dataStr = JSON.stringify(analyticsData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `analytics-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        trackUserInteraction('analytics_export', 'analytics');
+        alert('ส่งออกข้อมูลเรียบร้อยแล้ว!');
+    }
+
+    function clearAnalytics() {
+        if (confirm('คุณแน่ใจหรือไม่ที่จะล้างข้อมูลทั้งหมด?')) {
+            localStorage.setItem(ANALYTICS_KEY, JSON.stringify([]));
+            updateAnalyticsDisplay();
+            trackUserInteraction('analytics_cleared', 'analytics');
+        }
+    }
+
+    function initializeRevealAnimations() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+    }
+
+    function initializeHotkeys() {
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey) {
+                if (e.key === 'p' || e.code === 'KeyP') {
+                    e.preventDefault();
+                    const manager = document.getElementById('popupManager');
+                    manager.classList.toggle('active');
+                    trackUserInteraction('hotkey_used', 'system', 'popup_manager');
+                } else if (e.key === 'a' || e.code === 'KeyA') {
+                    e.preventDefault();
+                    const analytics = document.getElementById('analyticsDashboard');
+                    analytics.classList.toggle('active');
+                    if (analytics.classList.contains('active')) {
+                        updateAnalyticsDisplay();
+                    }
+                    trackUserInteraction('hotkey_used', 'system', 'analytics');
+                } else if (e.key === 'e' || e.code === 'KeyE') {
+                    e.preventDefault();
+                    toggleEditMode();
+                    trackUserInteraction('hotkey_used', 'system', 'content_editor');
+                }
+            }
+        });
+    }
+
+    function initializeContentEditor() {
+        const editButton = document.getElementById('editButton');
+        const contentEditor = document.getElementById('contentEditor');
+        const contentEditorClose = document.getElementById('contentEditorClose');
+        const editorTabs = document.querySelectorAll('.editor-tab');
+        const itemUrl = document.getElementById('itemUrl');
+        const saveItem = document.getElementById('saveItem');
+        const cancelAdd = document.getElementById('cancelAdd');
+        
+        // Edit button click handler
+        editButton.addEventListener('click', () => {
+            if (isEditMode) {
+                toggleEditMode();
+            } else {
+                checkAdminAccess();
+            }
+        });
+        
+        // Close content editor
+        contentEditorClose.addEventListener('click', () => {
+            contentEditor.classList.remove('active');
+        });
+        
+        // Tab switching
+        editorTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                editorTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                document.querySelectorAll('.editor-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                document.getElementById(`${tabId}Section`).classList.add('active');
+                
+                // Load items for this category
+                loadCategoryItems(tabId);
+            });
+        });
+        
+        // URL input change - update thumbnail preview
+        itemUrl.addEventListener('input', updateThumbnailPreview);
+        
+        // Save item
+        saveItem.addEventListener('click', saveItemHandler);
+        
+        // Cancel add
+        cancelAdd.addEventListener('click', cancelAddHandler);
+        
+        // Load initial data
+        loadCategoryItems('highlight');
+    }
+
+    function checkAdminAccess() {
+        const adminPass = localStorage.getItem(ADMIN_PASS_KEY);
+        const passwordModal = document.getElementById('passwordModal');
+        const passwordSetup = document.getElementById('passwordSetup');
+        const passwordLogin = document.getElementById('passwordLogin');
+        
+        if (!adminPass) {
+            // First time - setup password
+            passwordSetup.style.display = 'block';
+            passwordLogin.style.display = 'none';
+        } else {
+            // Existing user - login
+            passwordSetup.style.display = 'none';
+            passwordLogin.style.display = 'block';
+        }
+        
+        passwordModal.classList.add('active');
+    }
+
+    function setupPassword() {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (!newPassword) {
+            alert('กรุณากรอกรหัสผ่าน');
+            return;
+        }
+        
+        if (newPassword !== confirmPassword) {
+            alert('รหัสผ่านไม่ตรงกัน');
+            return;
+        }
+        
+        localStorage.setItem(ADMIN_PASS_KEY, newPassword);
+        closePasswordModal();
+        toggleEditMode();
+    }
+
+    function verifyPassword() {
+        const password = document.getElementById('password').value;
+        const adminPass = localStorage.getItem(ADMIN_PASS_KEY);
+        
+        if (password === adminPass) {
+            closePasswordModal();
+            toggleEditMode();
+        } else {
+            alert('รหัสผ่านไม่ถูกต้อง');
+        }
+    }
+
+    function closePasswordModal() {
+        document.getElementById('passwordModal').classList.remove('active');
+        // Clear password fields
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+        document.getElementById('password').value = '';
+    }
+
+    function toggleEditMode() {
+        isEditMode = !isEditMode;
+        const editButton = document.getElementById('editButton');
+        const contentEditor = document.getElementById('contentEditor');
+        
+        if (isEditMode) {
+            document.body.classList.add('edit-mode');
+            editButton.textContent = '❌';
+            editButton.setAttribute('aria-label', 'ปิดโหมดแก้ไข');
+            contentEditor.classList.add('active');
+            loadAllCategoryItems();
+        } else {
+            document.body.classList.remove('edit-mode');
+            editButton.textContent = '✏️';
+            editButton.setAttribute('aria-label', 'แก้ไขเนื้อหา');
+            contentEditor.classList.remove('active');
+        }
+        
+        // Refresh portfolio and graphic works to show/hide edit overlays
+        initializePortfolio();
+        initializeGraphicWorks();
+    }
+
+    function loadAllCategoryItems() {
+        const categories = ['highlight', 'commercial', 'shortform', 'film', 'tiktok', 'graphic'];
+        categories.forEach(category => {
+            loadCategoryItems(category);
+        });
+    }
+
+    function loadCategoryItems(category) {
+        const customData = loadCustomData();
+        const data = customData || portfolioData;
+        const items = data[category] || [];
+        const listElement = document.getElementById(`${category}List`);
+        
+        listElement.innerHTML = '';
+        
+        if (items.length === 0) {
+            listElement.innerHTML = '<p style="color: var(--text-muted); text-align: center;">ยังไม่มีรายการ</p>';
+            return;
+        }
+        
+        items.forEach((item, index) => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'item-card';
+            itemElement.innerHTML = `
+                <div class="item-header">
+                    <div class="item-title">${item.title}</div>
+                    <div class="item-actions">
+                        <button class="item-action" onclick="editItem('${category}', ${index})" aria-label="แก้ไข">✏️</button>
+                        <button class="item-action" onclick="moveItemUp('${category}', ${index})" aria-label="เลื่อนขึ้น">↑</button>
+                        <button class="item-action" onclick="moveItemDown('${category}', ${index})" aria-label="เลื่อนลง">↓</button>
+                        <button class="item-action" onclick="deleteItem('${category}', ${index})" aria-label="ลบ">🗑️</button>
+                    </div>
+                </div>
+                <div class="item-url">${item.url}</div>
+                ${item.description ? `<div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">${item.description}</div>` : ''}
+            `;
+            listElement.appendChild(itemElement);
+        });
+    }
+
+    function showAddForm(category) {
+        currentEditingCategory = category;
+        currentEditingIndex = -1;
+        
+        document.getElementById('formTitle').textContent = 'เพิ่มรายการใหม่';
+        document.getElementById('itemTitle').value = '';
+        document.getElementById('itemUrl').value = '';
+        document.getElementById('itemDescription').value = '';
+        document.getElementById('thumbnailPreview').innerHTML = '';
+        
+        // Show add form section
+        document.querySelectorAll('.editor-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        document.getElementById('addFormSection').classList.add('active');
+    }
+
+    function editItem(category, index) {
+        currentEditingCategory = category;
+        currentEditingIndex = index;
+        
+        const customData = loadCustomData();
+        const data = customData || portfolioData;
+        const item = data[category][index];
+        
+        document.getElementById('formTitle').textContent = 'แก้ไขรายการ';
+        document.getElementById('itemTitle').value = item.title;
+        document.getElementById('itemUrl').value = item.url;
+        document.getElementById('itemDescription').value = item.description || '';
+        
+        // Show thumbnail preview
+        updateThumbnailPreview();
+        
+        // Show add form section
+        document.querySelectorAll('.editor-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        document.getElementById('addFormSection').classList.add('active');
+    }
+
+    function updateThumbnailPreview() {
+        const url = document.getElementById('itemUrl').value;
+        const type = detectLinkType(url);
+        const thumbnailUrl = getThumbnail(url, type);
+        const previewElement = document.getElementById('thumbnailPreview');
+        
+        if (url && type !== 'unknown') {
+            previewElement.innerHTML = `
+                <p style="font-size: 0.8rem; margin-bottom: 0.5rem;">ตัวอย่าง thumbnail:</p>
+                <img src="${thumbnailUrl}" alt="Preview" style="max-width: 100%; max-height: 150px; border-radius: var(--radius); border: 1px solid var(--border);">
+                <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--text-muted);">ประเภท: ${type}</p>
+            `;
+        } else {
+            previewElement.innerHTML = '<p style="font-size: 0.8rem; color: var(--text-muted);">กรุณากรอก URL ที่ถูกต้องเพื่อดูตัวอย่าง</p>';
+        }
+    }
+
+    function saveItemHandler() {
+        const title = document.getElementById('itemTitle').value.trim();
+        const url = document.getElementById('itemUrl').value.trim();
+        const description = document.getElementById('itemDescription').value.trim();
+        
+        if (!title) {
+            alert('กรุณากรอกชื่อผลงาน');
+            return;
+        }
+        
+        if (!url) {
+            alert('กรุณากรอก URL');
+            return;
+        }
+        
+        const type = detectLinkType(url);
+        if (type === 'unknown') {
+            alert('URL ไม่ถูกต้อง กรุณากรอกลิงก์ YouTube, Google Drive หรือ TikTok');
+            return;
+        }
+        
+        const item = {
+            title,
+            url,
+            type,
+            description: description || ''
+        };
+        
+        // Save to custom data
+        let customData = loadCustomData() || JSON.parse(JSON.stringify(portfolioData));
+        
+        if (!customData[currentEditingCategory]) {
+            customData[currentEditingCategory] = [];
+        }
+        
+        if (currentEditingIndex === -1) {
+            // Add new item
+            customData[currentEditingCategory].push(item);
+        } else {
+            // Update existing item
+            customData[currentEditingCategory][currentEditingIndex] = item;
+        }
+        
+        localStorage.setItem(PORTFOLIO_CUSTOM_KEY, JSON.stringify(customData));
+        
+        // Refresh UI
+        loadCategoryItems(currentEditingCategory);
+        initializePortfolio();
+        initializeGraphicWorks();
+        
+        // Go back to category view
+        cancelAddHandler();
+        
+        alert('บันทึกสำเร็จ!');
+    }
+
+    function cancelAddHandler() {
+        // Go back to current category view
+        document.querySelectorAll('.editor-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        document.getElementById(`${currentEditingCategory}Section`).classList.add('active');
+        
+        // Reset editing state
+        currentEditingCategory = '';
+        currentEditingIndex = -1;
+    }
+
+    function moveItemUp(category, index) {
+        if (index <= 0) return;
+        
+        let customData = loadCustomData() || JSON.parse(JSON.stringify(portfolioData));
+        const items = customData[category];
+        
+        // Swap with previous item
+        [items[index], items[index - 1]] = [items[index - 1], items[index]];
+        
+        localStorage.setItem(PORTFOLIO_CUSTOM_KEY, JSON.stringify(customData));
+        
+        // Refresh UI
+        loadCategoryItems(category);
+        initializePortfolio();
+        initializeGraphicWorks();
+    }
+
+    function moveItemDown(category, index) {
+        let customData = loadCustomData() || JSON.parse(JSON.stringify(portfolioData));
+        const items = customData[category];
+        
+        if (index >= items.length - 1) return;
+        
+        // Swap with next item
+        [items[index], items[index + 1]] = [items[index + 1], items[index]];
+        
+        localStorage.setItem(PORTFOLIO_CUSTOM_KEY, JSON.stringify(customData));
+        
+        // Refresh UI
+        loadCategoryItems(category);
+        initializePortfolio();
+        initializeGraphicWorks();
+    }
+
+    function deleteItem(category, index) {
+        if (!confirm('คุณแน่ใจหรือไม่ที่จะลบรายการนี้?')) {
+            return;
+        }
+        
+        let customData = loadCustomData() || JSON.parse(JSON.stringify(portfolioData));
+        customData[category].splice(index, 1);
+        
+        localStorage.setItem(PORTFOLIO_CUSTOM_KEY, JSON.stringify(customData));
+        
+        // Refresh UI
+        loadCategoryItems(category);
+        initializePortfolio();
+        initializeGraphicWorks();
+    }
+
+    function openAdvancedEditor() {
+        const editor = document.getElementById('portfolioEditor');
+        const textarea = document.getElementById('editorTextarea');
+        
+        const customData = loadCustomData();
+        textarea.value = JSON.stringify(customData || portfolioData, null, 2);
+        
+        editor.classList.add('active');
+    }
+
+    function exportPortfolioData() {
+        const customData = loadCustomData() || portfolioData;
+        const dataStr = JSON.stringify(customData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        
+        const url = URL.createObjectURL(dataBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'poetry-pixel-portfolio.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        alert('ดาวน์โหลดข้อมูลสำเร็จ!');
+    }
+
+    function importPortfolioData() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = function(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    localStorage.setItem(PORTFOLIO_CUSTOM_KEY, JSON.stringify(data));
+                    
+                    // Refresh UI
+                    initializePortfolio();
+                    initializeGraphicWorks();
+                    loadAllCategoryItems();
+                    
+                    alert('นำเข้าข้อมูลสำเร็จ!');
+                } catch (err) {
+                    alert('เกิดข้อผิดพลาด: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    }
+
+    function loadCustomData() {
+        const customData = localStorage.getItem(PORTFOLIO_CUSTOM_KEY);
+        return customData ? JSON.parse(customData) : null;
+    }
+
+    function addSamplePromotion() {
+        alert('เพิ่มโปรโมชั่นตัวอย่างเรียบร้อย! (ฟังก์ชันสาธิต)');
+        trackUserInteraction('promotion_added', 'manager', 'sample');
+    }
+
+    // Future API Methods
+    async function fetchPortfolioData(){ return portfolioData; } // TODO: replace with /api/portfolio
+    async function fetchPricingData(){ return pricingData; } // TODO: replace with /api/pricing
+    async function fetchPromoData(){ 
+        return JSON.parse(localStorage.getItem(PROMOTION_POPUP_KEY) || '[]'); 
+    } // TODO: replace with /api/promotions
+</script>
+
+<!-- 
+วิธีเทส:
+1. คลิกปุ่ม "แก้ไขเนื้อหา" มุมขวาล่าง → ตั้งรหัสผ่าน/ล็อกอิน
+2. ใช้แท็บหมวดต่างๆ เพื่อเพิ่ม/แก้ไข/ลบรายการ
+3. ระบบตรวจชนิดลิงก์อัตโนมัติ + แสดงตัวอย่าง thumbnail
+4. Inline edit บนการ์ดผลงานในโหมดแก้ไข
+5. ใช้ Advanced JSON สำหรับการจัดการข้อมูลขั้นสูง
+6. บันทึกอัตโนมัติ + รีเฟรช UI ทันที
+-->
+</body>
+</html>
